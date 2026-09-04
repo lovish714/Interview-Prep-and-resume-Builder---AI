@@ -2,7 +2,7 @@
 
 
   const api = axios.create({
-    baseURL: "https://interview-prep-and-resume-builder-ai.onrender.com",
+    baseURL: import.meta.env.VITE_API_URL,
     withCredentials: true
   })
 
