@@ -1,5 +1,5 @@
 import { RouterProvider } from "react-router"
-import { router } from "./app.routes.jsx"
+import { router } from "./App.routes.jsx"
 import { AuthProvider } from "./features/auth/auto.context.jsx"
 import { InterviewProvider } from "./features/interview/interview.context.jsx"
 
