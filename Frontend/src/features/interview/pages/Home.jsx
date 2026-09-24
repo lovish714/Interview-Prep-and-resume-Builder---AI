@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 import "../style/home.scss"
-import { useInterview } from '../hooks/useInterview.js' 
+import { useInterview } from '../hooks/useInterview.js'
 import { useNavigate } from 'react-router'
 
 
@@ -8,12 +8,12 @@ function Home() {
     const { loading, generateReport, reports } = useInterview()
     const [jobDescription, setJobDescription] = useState("")
     const [selfDescription, setSelfDescription] = useState("")
+    const [resumeFile, setResumeFile] = useState(null)
     const resumeInputRef = useRef()
 
     const navigate = useNavigate()
 
     const handleGenerateReport = async () => {
-        const resumeFile = resumeInputRef.current.files[0]
         const data = await generateReport({ jobDescription, selfDescription, resumeFile })
         navigate(`/interview/${data._id}`)
     }
@@ -54,7 +54,7 @@ function Home() {
                             placeholder={`Paste the full job description here...\ne.g. 'Senior Frontend Engineer at Google requires proficiency in React, TypeScript, and large-scale system design...'`}
                             maxLength={5000}
                         />
-                        <div className='char-counter'>0 / 5000 chars</div>
+                        <div className='char-counter'>{jobDescription.length} / 5000 chars</div>
                     </div>
 
                     {/* Vertical Divider */}
@@ -76,12 +76,57 @@ function Home() {
                                 <span className='badge badge--best'>Best Results</span>
                             </label>
                             <label className='dropzone' htmlFor='resume'>
+
                                 <span className='dropzone__icon'>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 16 12 12 8 16" /><line x1="12" y1="12" x2="12" y2="21" /><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" /></svg>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="28"
+                                        height="28"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    >
+                                        <polyline points="16 16 12 12 8 16" />
+                                        <line x1="12" y1="12" x2="12" y2="21" />
+                                        <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+                                    </svg>
                                 </span>
-                                <p className='dropzone__title'>Click to upload or drag &amp; drop</p>
-                                <p className='dropzone__subtitle'>PDF or DOCX (Max 5MB)</p>
-                                <input ref={resumeInputRef} hidden type='file' id='resume' name='resume' accept='.pdf,.docx' />
+
+                                {resumeFile ? (
+                                    <>
+                                        <p className='dropzone__title'>
+                                            ✓ Resume Uploaded
+                                        </p>
+
+                                        <p className='dropzone__subtitle'>
+                                            {resumeFile.name}
+                                        </p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p className='dropzone__title'>
+                                            Click to upload or drag & drop
+                                        </p>
+
+                                        <p className='dropzone__subtitle'>
+                                            PDF or DOCX (Max 5MB)
+                                        </p>
+                                    </>
+                                )}
+
+                                <input
+                                    ref={resumeInputRef}
+                                    hidden
+                                    type='file'
+                                    id='resume'
+                                    name='resume'
+                                    accept='.pdf,.docx'
+                                    onChange={(e) => setResumeFile(e.target.files[0])}
+                                />
+
                             </label>
                         </div>
 
