@@ -13,10 +13,29 @@ function Home() {
 
     const navigate = useNavigate()
 
-    const handleGenerateReport = async () => {
-        const data = await generateReport({ jobDescription, selfDescription, resumeFile })
+   const handleGenerateReport = async () => {
+    try {
+        const data = await generateReport({
+            jobDescription,
+            selfDescription,
+            resumeFile
+        })
+
+        console.log("Generated report:", data)
+
+        if (!data?._id) {
+            throw new Error("Report ID was not returned")
+        }
+
         navigate(`/interview/${data._id}`)
+
+    } catch (error) {
+        console.error(
+            "Failed to generate report:",
+            error.response?.data || error.message
+        )
     }
+}
 
     if (loading) {
         return (

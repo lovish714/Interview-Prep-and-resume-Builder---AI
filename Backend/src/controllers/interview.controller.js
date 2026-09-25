@@ -3,34 +3,56 @@
  const interviewReportModel  = require("../models/interviewReport.model")
  
 
- async function generateInterViewReportController(req , res){
+async function generateInterViewReportController(req, res) {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                message: "Resume PDF is required"
+            })
+        }
 
+        const resumeContent = await (
+            new pdfParse.PDFParse(
+                Uint8Array.from(req.file.buffer)
+            )
+        ).getText()
 
-    const resumeContent = await (new pdfParse.PDFParse(Uint8Array.from(req.file.buffer))).getText()
-    const {selfDescription , jobDescription} = req.body
+        const { selfDescription, jobDescription } = req.body
 
+        console.log("Generating interview report...")
+        console.log("Job description received:", !!jobDescription)
+        console.log("Self description received:", !!selfDescription)
+        console.log("Resume received:", !!resumeContent.text)
 
-    const interViewReportByAI = await generateInterviewReport({
-        resume: resumeContent.text,
-        selfDescription,
-        jobDescription
-    })
+        const interViewReportByAI = await generateInterviewReport({
+            resume: resumeContent.text,
+            selfDescription,
+            jobDescription
+        })
 
+        const interviewReport = await interviewReportModel.create({
+            user: req.user.id,
+            resume: resumeContent.text,
+            selfDescription,
+            jobDescription,
+            ...interViewReportByAI
+        })
 
+        return res.status(201).json({
+            message: "Interview report generated successfully",
+            interviewReport
+        })
 
-    const interviewReport = await interviewReportModel.create({
-        user: req.user.id,
-        resume: resumeContent.text,
-        selfDescription,
-        jobDescription,
-        ...interViewReportByAI
-    })
+    } catch (error) {
+        console.error("GENERATE INTERVIEW REPORT ERROR:")
+        console.error(error)
 
-    res.status(201).json({
-        message: "Interview report generated successfully",
-        interviewReport
-    })
- }
+        return res.status(503).json({
+            message: "AI service is temporarily unavailable",
+            error: error.message
+        })
+    }
+}
 
 
 

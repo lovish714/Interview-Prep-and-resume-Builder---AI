@@ -33,28 +33,50 @@ const interviewReportSchema = z.object({
 
 
 
-async function generateInterviewReport({ resume, selfDescription, jobDescription }) {
+async function generateInterviewReport({
+    resume,
+    selfDescription,
+    jobDescription
+}) {
+    try {
+        console.log("Starting Gemini interview report generation...")
 
+        const prompt = `Generate an interview report for a candidate with the following details:
 
-    const prompt = `Generate an interview report for a candidate with the following details:
-                        Resume: ${resume}
-                        Self Description: ${selfDescription}
-                        Job Description: ${jobDescription}
+Resume: ${resume || "Not provided"}
+
+Self Description: ${selfDescription || "Not provided"}
+
+Job Description: ${jobDescription || "Not provided"}
 `
 
-    const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
-        contents: prompt,
-        config: {
-            responseMimeType: "application/json",
-            responseSchema: z.toJSONSchema(interviewReportSchema),
+        const response = await ai.models.generateContent({
+            model: "gemini-3.5-flash",
+            contents: prompt,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: z.toJSONSchema(interviewReportSchema),
+            }
+        })
+
+        console.log("Gemini response received")
+
+        if (!response || !response.text) {
+            throw new Error("Gemini returned an empty response")
         }
-    })
 
-    
-    return JSON.parse(response.text)
+        console.log("Gemini response text:", response.text)
 
+        return JSON.parse(response.text)
 
+    } catch (error) {
+        console.error("Gemini interview report error:")
+        console.error("Message:", error.message)
+        console.error("Status:", error.status)
+        console.error("Details:", error)
+        
+        throw error
+    }
 }
 
 
