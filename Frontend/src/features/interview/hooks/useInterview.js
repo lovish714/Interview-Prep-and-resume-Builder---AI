@@ -30,19 +30,38 @@ export const useInterview = () => {
         return response.interviewReport
     }
 
-    const getReportById = async (interviewId) => {
-        setLoading(true)
-        let response = null
-        try {
-            response = await getInterviewReportById(interviewId)
-            setReport(response.interviewReport)
-        } catch (error) {
-            console.log(error)
-        } finally {
-            setLoading(false)
+   const getReportById = async (interviewId) => {
+    setLoading(true)
+
+    try {
+        console.log("Getting interview report:", interviewId)
+
+        const response = await getInterviewReportById(interviewId)
+
+        console.log("Interview report response:", response)
+
+        if (!response || !response.interviewReport) {
+            throw new Error("Interview report not found in API response")
         }
+
+        setReport(response.interviewReport)
+
         return response.interviewReport
+
+    } catch (error) {
+        console.error(
+            "getReportById error:",
+            error.response?.data || error.message || error
+        )
+
+        setReport(null)
+
+        throw error
+
+    } finally {
+        setLoading(false)
     }
+}
 
     const getReports = async () => {
         setLoading(true)

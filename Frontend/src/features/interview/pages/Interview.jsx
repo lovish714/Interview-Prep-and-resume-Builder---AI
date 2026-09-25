@@ -63,21 +63,34 @@ function Interview() {
     const { report, getReportById, loading, getResumePdf } = useInterview()
     const { interviewId } = useParams()
 
-    useEffect(() => {
-        if (interviewId) {
-            getReportById(interviewId)
-        }
-    }, [ interviewId ])
+   useEffect(() => {
+    console.log("Interview ID:", interviewId)
 
-
-
-    if (loading || !report) {
-        return (
-            <main className='loading-screen'>
-                <h1>Loading your interview plan...</h1>
-            </main>
-        )
+    if (interviewId) {
+        getReportById(interviewId)
+            .catch(error => {
+                console.error("Failed to load interview:", error)
+            })
     }
+}, [interviewId])
+
+
+
+  if (loading) {
+    return (
+        <main className='loading-screen'>
+            <h1>Loading your interview plan...</h1>
+        </main>
+    )
+}
+
+if (!report) {
+    return (
+        <main className='loading-screen'>
+            <h1>Interview plan not found.</h1>
+        </main>
+    )
+}
 
     const scoreColor =
         report.matchScore >= 80 ? 'score--high' :
