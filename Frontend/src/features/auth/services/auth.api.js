@@ -16,9 +16,9 @@
      return response.data
 
    } catch (error) {
-    console.log(error);
-    
-   }
+    console.error(error.response?.data || error.message);
+    throw error;
+}
   }
 
 
@@ -31,9 +31,9 @@
      return response.data
 
    } catch (error) {
-    console.log(error);
-    
-   }
+    console.error(error.response?.data || error.message);
+    throw error;
+}
   }
 
 
@@ -44,9 +44,9 @@
         return response.data
         
     } catch (error) {
-        console.log(error);
-        
-    }
+    console.error(error.response?.data || error.message);
+    throw error;
+}
   }
 
 
@@ -58,7 +58,7 @@
         return response.data
 
     } catch (error) {
-        console.log(error);
-        
-    }
+    console.error(error.response?.data || error.message);
+    throw error;
+}
   }
